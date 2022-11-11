@@ -127,7 +127,7 @@
 				catch (Exception $e)
 				{
 					echo "<p class = \"error\">";
-					echo "Error, please check the data and enter again</p>";
+					echo "Error,fgsdgsdgsdg please check the data and enter again</p>";
 					//header("Location: admin_editUserInfo.php");
 				}	
 			}
@@ -149,6 +149,9 @@
 			//show a drop down of existing users
 			//have a checkbox to make sure 
 			//delete from database
+
+
+			//updated from vs code desktop
 
 		}
 	?>
