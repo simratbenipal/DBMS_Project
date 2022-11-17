@@ -42,8 +42,8 @@ if (isset($_POST['uname']) && isset($_POST['password']))
             {
                 if($pass == $row['Password'])
                 {
-                    echo $uname ."<br>". $row['Username'] . "<br>";
-                    echo $pass ."<br>". $row['Password'] . "<br>";
+                   // echo $uname ."<br>". $row['Username'] . "<br>";
+                   // echo $pass ."<br>". $row['Password'] . "<br>";
                     //Password and username matched here
                     //login successful
                     //ask for if want to update user information or entertainment information
@@ -52,7 +52,6 @@ if (isset($_POST['uname']) && isset($_POST['password']))
                    $success = true;
                    break;
                 }
-
             }        
         }
         mysqli_close($connection);

@@ -20,6 +20,10 @@
 	<button style = "float:middle"  type="submit" action="user_login.php">Edit User Information
 	</button>	
 	</form>
+
+	<form style = "width: 200px" action="admin_AddNewAdmin.php"  method="post">
+	<button name = "addNewAdmin" type="submit">Add New Admin</button>
+	</form>	
 	
 	<form style = "width: 200px" action="admin_editEntertainmentInfo.php"  method="post">
 	<button type="submit">Edit Entertainment Information</button>

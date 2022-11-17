@@ -5,6 +5,19 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>Edit User Information</title>
 	<link rel="stylesheet" type="text/css" href="style.css">
+
+	<style>
+		<?php //https://www.w3schools.com/cssref/sel_class.php ?>
+		p.goodData
+		{
+			background: #a3dd94;
+			color: #eaece6;
+			padding: 10px;
+			width: 95%;
+			border-radius: 5px;
+			margin: 20px auto;
+		}
+</style>
 </head>
 <body style = "flex-direction: column">
 	<h2>Editing User Information </h2>
@@ -30,7 +43,7 @@
 			echo "<tr>";
 			echo "<td>" . $row['Username'] . "</td>";
 			echo "<td>" . $row['No of Reviews'] . "</td>";
-			echo "<td>" . $row['No of Reviews'] . "</td>";
+			echo "<td>" . $row['Rating'] . "</td>";
 			echo "</tr>";
 
 		}
@@ -111,12 +124,32 @@
 			}
 			else
 			{
+				//https://www.php.net/manual/en/function.str-contains.php
+				//should be good to prevent SQL injections
+				//check for ;  =  -  ' '  \
+				//if the username or password contains, then stop otherwise execute the query
+				if(str_contains($newUser, ';')|| str_contains($newUser, '=') || str_contains($newUser, '-')|| str_contains($newUser, ' ') ||  str_contains($newUser, '\\') )
+				{
+					echo "<p class = \"error\">";
+					echo "Invalid characters in Username, try again<br>";
+					echo "</p>";
+				}
+				else if(str_contains($newPass, ';')|| (str_contains ($newPass, '=')) || str_contains($newPass, '\\') ||  str_contains($newPass, ' ') || str_contains($newPass, '-'))
+				{
+					echo "<p class = \"error\">";
+					echo "Invalid characters in Password, try again<br>";
+					echo "</p>";
+				}
+				else
+				{
 				//data is good, add to sql database
 				$sql_insert = "INSERT INTO user (Username, Password, Num_Reviews, Rating) VALUES('$newUser','$newPass', $newReviews, $newRating )";
 				try
 				{
 					mysqli_query($connection, $sql_insert);
+					echo "<p class = \"goodData\">";
 					echo "Data added successfully to the database";
+					echo "</p>";
 					//header("Location: admin_editUserInfo.php");
 
 					echo "<br>";
@@ -127,11 +160,91 @@
 				catch (Exception $e)
 				{
 					echo "<p class = \"error\">";
-					echo "Error,fgsdgsdgsdg please check the data and enter again</p>";
+					echo "Error, please check the data and enter again</p>";
 					//header("Location: admin_editUserInfo.php");
 				}	
 			}
+			}
 		}
+	?>
+
+	
+	<?php
+		if (isset($_POST['deleteUser'])) 
+		{
+			echo "<h2>Deleting an user</h2>";
+			//show a drop down of existing users
+			//have a checkbox to make sure 
+			//delete from database
+			
+			$allUsernames = mysqli_query($connection, "SELECT * FROM user");
+			echo "<form action = \"\" method = \"post\">";
+			echo "<label>Select user to delete : </label>";
+			echo "<select name = \"selectedUser\" id=\"selectedUserId\">" ;
+			
+			while($row = mysqli_fetch_array($allUsernames))
+			{
+				//echo  $row['Username'] ; 
+				//https://www.w3schools.com/tags/tag_select.asp
+				echo "<option value = ".  $row['Username']. "> ".  $row['Username'] . "</option>";
+			}
+			echo "</select>";
+			echo "<br><br>";
+			echo "<label for = \"checkbox\"> Do you want to remove the selected User : </label>";
+			echo  "<input type = \"checkbox\" name = \"checkbox\" id = \"checkedId\" </input> ";
+			echo "<button type = \"submit\">Delete user from Database</button>";
+			echo "</form>";
+			echo "<br>";
+		}
+
+		if (isset($_POST['selectedUser']) )
+		{
+			$selectedUser 	= $_POST['selectedUser'];
+			if(!isset($_POST['checkbox']))
+			{
+				echo "<p class = \"error\">";
+				echo "Checkbox not selected<br>";
+				echo "User not deleted<br>";
+				echo "</p>";
+
+			}
+			else if (strcmp ($selectedUser, "administrator") == 0)
+			{
+				echo "<p class = \"error\">";
+				echo "Cannot delete administrator<br>";
+				echo "</p>";
+			}
+			else if (strcmp ($selectedUser, "Simrat") == 0)
+			{
+				echo "<p class = \"error\">";
+				echo "Cannot delete:  Simrat<br>";
+				echo "</p>";
+			}
+			else
+			{
+				//data is good, delete from database
+				$sql_delete = "DELETE FROM user WHERE username = '$selectedUser'";
+				try
+				{
+					mysqli_query($connection, $sql_delete);
+					echo "<p class = \"goodData\">";
+					echo "User deleted successfully from the database";
+					echo "</p>";
+					//header("Location: admin_editUserInfo.php");
+
+					echo "<br>";
+					echo "<form style = \"width: 200px\" action=\"admin_editUserInfo.php\"  method = \"post\">";
+					echo "<button name = \"\" type = \"submit\">Click here to update table</button>";
+					echo "</form>";
+				}
+				catch (Exception $e)
+				{
+					echo "<p class = \"error\">";
+					echo "Error, Unable to delete the user</p>";
+					//header("Location: admin_editUserInfo.php");
+				}	
+			}
+		}	
 	?>
 
 	<?php
@@ -139,25 +252,75 @@
 		{
 			echo "<h2>Update an existing user</h2>";
 			//show list of users, then ask what you want to change and then do accordingly
+			$allUsernames = mysqli_query($connection, "SELECT * FROM user");
+			echo "<form action = \"\" method = \"post\">";
+			echo "<label>Select user to edit : </label>";
+			echo "<select name = \"edit_user\" id=\"edit_user\">" ;
+			
+			while($row = mysqli_fetch_array($allUsernames))
+			{
+				//echo  $row['Username'] ; 
+				//https://www.w3schools.com/tags/tag_select.asp
+				echo "<option value = ".  $row['Username']. "> ".  $row['Username'] . "</option>";
+			}
+			echo "</select>";
+			echo "<br>";
+			//https://www.w3schools.com/tags/tag_select.asp
+			echo "<label>Number of Reviews</label>";
+			echo "<select name = \"num_reviews_edit\" id=\"num_of_reviews\">" ;
+			echo "<option value= \"0\"> 0 (Default)</option>";
+			echo "<option value= \"1\"> 1 </option>";
+			echo "<option value= \"2\"> 2 </option>";
+			echo "<option value= \"3\"> 3 </option>";
+			echo "<option value= \"4\"> 4 </option>";
+			echo "<option value= \"5\"> 5 </option>";
+			echo "</select>";
+			echo "<br>";
+
+			echo "<label>Rating of the User&nbsp&nbsp</label>";
+			echo "<select name = \"user_rating_edit\" id=\"rating_of_user\">" ;
+			echo "<option value= \"0\"> 0 (Default)</option>";
+			echo "<option value= \"1\"> 1 </option>";
+			echo "<option value= \"2\"> 2 </option>";
+			echo "<option value= \"3\"> 3 </option>";
+			echo "<option value= \"4\"> 4 </option>";
+			echo "<option value= \"5\"> 5 </option>";
+			echo "</select>";
+			echo "<br><br>";
+			echo "<button type = \"submit\">Update user</button>";
+			echo "<label>(Please select both values)</label>";
+			echo "</form>";
+			echo "<br>";
+
+			
+
 		}
-	?>
-
-	<?php
-		if (isset($_POST['deleteUser'])) 
+		if ((isset($_POST['edit_user'])) || (isset($_POST['num_reviews_edit']))|| (isset($_POST['user_rating_edit'])))
 		{
-			echo "<h2>Delete an user</h2>";
-			//show a drop down of existing users
-			//have a checkbox to make sure 
-			//delete from database
+			$user_to_edit = $_POST['edit_user'];
+			$edit_new_rating = $_POST['user_rating_edit'];
+			$edit_new_reviews = $_POST['num_reviews_edit'];
 
+			$user_edit = "UPDATE user SET Num_Reviews  = '$edit_new_reviews', Rating = '$edit_new_rating' WHERE username = '$user_to_edit'";
+			try
+				{
+					mysqli_query($connection, $user_edit);
+					echo "<p class = \"goodData\">";
+					echo "User updated successfully in the database";
+					echo "</p>";
+					//header("Location: admin_editUserInfo.php");
 
-			//updated from vs code desktop
-
-
-			//update 2
-
-			//update local file 
-
+					echo "<br>";
+					echo "<form style = \"width: 200px\" action=\"admin_editUserInfo.php\"  method = \"post\">";
+					echo "<button name = \"\" type = \"submit\">Click here to update table</button>";
+					echo "</form>";
+				}
+				catch (Exception $e)
+				{
+					echo "<p class = \"error\">";
+					echo "Error, Unable to update the user</p>";
+					//header("Location: admin_editUserInfo.php");
+				}	
 		}
 	?>
 	<br><br>
