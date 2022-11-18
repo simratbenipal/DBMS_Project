@@ -19,7 +19,7 @@
 		}
 </style>
 </head>
-<body style = "flex-direction: column">
+<body style = "flex-direction: column; justify-content:normal">
 	<h2>Current admins in the System</h2>
 	<?php 
 		$connection = mysqli_connect("localhost", "root", "","entertainment_db");
@@ -209,7 +209,7 @@
 		}	
 	?>
 	<br><br>
-	<a href="index.php">Link to Main Page</a>
+	<a href="admin_choice.php">Link to Previous Page</a>
 	<?php mysqli_close($connection); ?>		
 </body>
 </html>

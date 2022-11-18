@@ -4,7 +4,7 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>Edit User Information</title>
-	<link rel="stylesheet" type="text/css" href="style.css">
+	<link rel="stylesheet" type="text/css" href="./../style.css">
 
 	<style>
 		<?php //https://www.w3schools.com/cssref/sel_class.php ?>
@@ -19,9 +19,9 @@
 		}
 </style>
 </head>
-<body style = "flex-direction: column">
-	<h2>Editing User Information </h2>
-	<h2>Current Users in the System</h2>
+<body style = "flex-direction: column; justify-content:normal">
+	<h2>Editing Actor Information </h2>
+	<h2>Current Actors in the System</h2>
 	<?php 
 		$connection = mysqli_connect("localhost", "root", "","entertainment_db");
 		//check if connection was made properly or no
@@ -30,120 +30,109 @@
 			echo "Failed to connect: " . mysqli_connect_error();
 		}
 		//echo "Connection made to database ";
-		$result = mysqli_query($connection, "SELECT Username, Num_Reviews AS `No of Reviews`, Rating FROM user");
+		$result = mysqli_query($connection, "SELECT * FROM actor");
 		echo "<table style = \"background: #D0E4F5;border: 1px solid #AAAAAA;
 		padding: 3px 2px;font-size: 20px;\" border = '1'>
 			<tr>
-			<th>Username</th>
-			<th>'No of Reviews'</th>
-			<th>Rating</th>
+			<th>SSN</th>
+			<th>First Name</th>
+			<th>Last Name</th>
 			</tr>";
 		while($row = mysqli_fetch_array($result))
 		{
 			echo "<tr>";
-			echo "<td>" . $row['Username'] . "</td>";
-			echo "<td>" . $row['No of Reviews'] . "</td>";
-			echo "<td>" . $row['Rating'] . "</td>";
+			echo "<td>" . $row['ssn'] . "</td>";
+			echo "<td>" . $row['fname'] . "</td>";
+			echo "<td>" . $row['lname'] . "</td>";
 			echo "</tr>";
 
 		}
 		echo "</table>";
 
-		$displayUserForm = FALSE;
-		//mysqli_close($connection);
+	
 	?>
 	<br><br>
 	<!-- make these work on the same page -->
 	<form style = "width: 200px" action=""  method="post">
-	<button name = "addNewUser" style = "float:middle"  type="submit">Add New User
-	</button> <?php $displayUserForm = TRUE;?>
+	<button name = "addNewActor" style = "float:middle"  type="submit">Add New Actor
+	</button>
 	</form>
 
 	<form style = "width: 200px" action=""  method="post">
-	<button name = "deleteUser" type="submit">Delete an User</button>
+	<button name = "deleteActor" type="submit">Delete an Actor</button>
 	</form>	
 	
 	<form style = "width: 200px" action=""  method="post">
-	<button name = "updateExistingUser" type="submit">Update Existing User</button>
+	<button name = "updateExistingActor" type="submit">Update ACTS_IN (under const)</button>
 	</form>	
 
 	<?php
-		if (isset($_POST['addNewUser'])) 
+		if (isset($_POST['addNewActor'])) 
 		{
-			echo "<h2>Adding a New User</h2>";
+			echo "<h2>Adding a New Actor</h2>";
 			//for to ask for user information
-			//ask for Username
-			//ask for Password
-			//ask for Num_Reviews
+			//ask for SSN
+			//ask for fname
+			//ask for lname
 			//ask for Rating
 			echo "<form action = \"\" method = \"post\">";
-			echo "<label>New Username</label>";
-			echo "<input type=\"text\" name=\"newUsername\" placeholder=\"Enter username of the new user\"><br>";
-			echo "<label>New Password</label>";
-			echo "<input type=\"password\" name=\"newPassword\" placeholder=\"Enter password of the new user\"><br>";
-
-			//https://www.w3schools.com/tags/tag_select.asp
-			echo "<label>Number of Reviews</label>";
-			echo "<select name = \"num_reviews\" id=\"num_of_reviews\">" ;
-			echo "<option value= \"0\"> 0 (Default)</option>";
-			echo "<option value= \"1\"> 1 </option>";
-			echo "<option value= \"2\"> 2 </option>";
-			echo "<option value= \"3\"> 3 </option>";
-			echo "<option value= \"4\"> 4 </option>";
-			echo "<option value= \"5\"> 5 </option>";
-			echo "</select>";
-			echo "<br>";
-
-			echo "<label>Rating of the User&nbsp&nbsp</label>";
-			echo "<select name = \"user_rating\" id=\"rating_of_user\">" ;
-			echo "<option value= \"0\"> 0 (Default)</option>";
-			echo "<option value= \"1\"> 1 </option>";
-			echo "<option value= \"2\"> 2 </option>";
-			echo "<option value= \"3\"> 3 </option>";
-			echo "<option value= \"4\"> 4 </option>";
-			echo "<option value= \"5\"> 5 </option>";
-			echo "</select>";
+			echo "<label>New SSN</label>";
+			echo "<input type=\"text\" name=\"newSSN\" placeholder=\"Enter SSN (xxx-xxx-xxxx)\"><br>";
+			echo "<label>First Name</label>";
+			echo "<input type=\"text\" name=\"newfname\" placeholder=\"Enter First Name\"><br>";
+            echo "<label>Last Name</label>";
+			echo "<input type=\"text\" name=\"newlname\" placeholder=\"Enter Last Name\"><br>";
 
 			echo "<button type = \"submit\"> Add Data into Database</button>";
 			echo "</form>";
 		}
 
-		if ((isset($_POST['newUsername'])) && (isset($_POST['newPassword'])) && (isset($_POST['num_reviews'])) && (isset($_POST['user_rating'])) )
+		if ((isset($_POST['newSSN'])) && (isset($_POST['newfname'])) && (isset($_POST['newlname'])))
 		{
-			$newUser 	= $_POST['newUsername'];
-			$newPass 	= $_POST['newPassword'];
-			$newReviews = $_POST['num_reviews'];
-			$newRating 	= $_POST['user_rating'];
+			$newSSN 	= $_POST['newSSN'];
+			$newfname 	= $_POST['newfname'];
+			$newlname = $_POST['newlname'];
 
 			//https://www.geeksforgeeks.org/php-strlen-function/
 			//https://www.w3schools.com/php/func_var_empty.asp
-			if (empty($newUser) || empty($newPass) || (strlen($newUser) < 7) || (strlen($newPass) < 7))
-			{
-				echo "<p class = \"error\">";
-				echo "Enter a valid Username/Password<br> Enter Data Again</p>";
-			}
+			if (empty($newSSN) || empty($newfname) || empty($newlname))
+            {
+                echo "<p class = \"error\">";
+				echo "Values cannot be empty<br> Enter Data Again</p>";
+            }
+            else if (strlen($newSSN) < 12)
+            {
+                echo "<p class = \"error\">";
+                echo "Enter a valid SSN<br> Enter Data Again</p>";
+            }
 			else
 			{
 				//https://www.php.net/manual/en/function.str-contains.php
 				//should be good to prevent SQL injections
 				//check for ;  =  -  ' '  \
 				//if the username or password contains, then stop otherwise execute the query
-				if(str_contains($newUser, ';')|| str_contains($newUser, '=') || str_contains($newUser, '-')|| str_contains($newUser, ' ') ||  str_contains($newUser, '\\') )
+				if(str_contains($newfname, ';')|| str_contains($newfname, '=') || str_contains($newfname, '-')|| str_contains($newfname, ' ') ||  str_contains($newfname, '\\') )
 				{
 					echo "<p class = \"error\">";
-					echo "Invalid characters in Username, try again<br>";
+					echo "Invalid characters in First Name, try again<br>";
 					echo "</p>";
 				}
-				else if(str_contains($newPass, ';')|| (str_contains ($newPass, '=')) || str_contains($newPass, '\\') ||  str_contains($newPass, ' ') || str_contains($newPass, '-'))
+				else if(str_contains($newlname, ';')|| (str_contains ($newlname, '=')) || str_contains($newlname, '\\') ||  str_contains($newlname, ' ') || str_contains($newlname, '-'))
 				{
 					echo "<p class = \"error\">";
 					echo "Invalid characters in Password, try again<br>";
 					echo "</p>";
 				}
+                else if(str_contains($newSSN, ';')|| (str_contains ($newSSN, '=')) || str_contains($newSSN, '\\') ||  str_contains($newSSN, ' ') || str_contains($newSSN, '--'))
+				{
+					echo "<p class = \"error\">";
+					echo "Invalid characters in SSN, try again<br>";
+					echo "</p>";
+				}
 				else
 				{
 				//data is good, add to sql database
-				$sql_insert = "INSERT INTO user (Username, Password, Num_Reviews, Rating) VALUES('$newUser','$newPass', $newReviews, $newRating )";
+				$sql_insert = "INSERT INTO actor (ssn, fname, lname) VALUES('$newSSN','$newfname', '$newlname')";
 				try
 				{
 					mysqli_query($connection, $sql_insert);
@@ -153,7 +142,7 @@
 					//header("Location: admin_editUserInfo.php");
 
 					echo "<br>";
-					echo "<form style = \"width: 200px\" action=\"admin_editUserInfo.php\"  method = \"post\">";
+					echo "<form style = \"width: 200px\" action=\"admin_editActor.php\"  method = \"post\">";
 					echo "<button name = \"\" type = \"submit\">Click here to update table</button>";
 					echo "</form>";
 				}
@@ -162,6 +151,7 @@
 					echo "<p class = \"error\">";
 					echo "Error, please check the data and enter again</p>";
 					//header("Location: admin_editUserInfo.php");
+                    echo $e;
 				}	
 			}
 			}
@@ -170,23 +160,23 @@
 
 	
 	<?php
-		if (isset($_POST['deleteUser'])) 
+		if (isset($_POST['deleteActor'])) 
 		{
-			echo "<h2>Deleting an user</h2>";
-			//show a drop down of existing users
+			echo "<h2>Deleting an Actor</h2>";
+			//show a drop down of existing actors
 			//have a checkbox to make sure 
 			//delete from database
 			
-			$allUsernames = mysqli_query($connection, "SELECT * FROM user");
+			$allActors = mysqli_query($connection, "SELECT * FROM actor");
 			echo "<form action = \"\" method = \"post\">";
-			echo "<label>Select user to delete : </label>";
+			echo "<label>Select Actor to delete : </label>";
 			echo "<select name = \"selectedUser\" id=\"selectedUserId\">" ;
 			
-			while($row = mysqli_fetch_array($allUsernames))
+			while($row = mysqli_fetch_array($allActors))
 			{
 				//echo  $row['Username'] ; 
 				//https://www.w3schools.com/tags/tag_select.asp
-				echo "<option value = ".  $row['Username']. "> ".  $row['Username'] . "</option>";
+				echo "<option value = ".  $row['ssn']. "> (".  $row['ssn'] .") ". $row['fname'] ." ". $row['lname']."</option>";
 			}
 			echo "</select>";
 			echo "<br><br>";
@@ -208,22 +198,16 @@
 				echo "</p>";
 
 			}
-			else if (strcmp ($selectedUser, "administrator") == 0)
+			else if (strcmp ($selectedUser, "1234") == 0)
 			{
 				echo "<p class = \"error\">";
-				echo "Cannot delete administrator<br>";
-				echo "</p>";
-			}
-			else if (strcmp ($selectedUser, "Simrat") == 0)
-			{
-				echo "<p class = \"error\">";
-				echo "Cannot delete:  Simrat<br>";
+				echo "Cannot delete 'John Doe'<br>";
 				echo "</p>";
 			}
 			else
 			{
 				//data is good, delete from database
-				$sql_delete = "DELETE FROM user WHERE username = '$selectedUser'";
+				$sql_delete = "DELETE FROM actor WHERE ssn = '$selectedUser'";
 				try
 				{
 					mysqli_query($connection, $sql_delete);
@@ -233,7 +217,7 @@
 					//header("Location: admin_editUserInfo.php");
 
 					echo "<br>";
-					echo "<form style = \"width: 200px\" action=\"admin_editUserInfo.php\"  method = \"post\">";
+					echo "<form style = \"width: 200px\" action=\"admin_editActor.php\"  method = \"post\">";
 					echo "<button name = \"\" type = \"submit\">Click here to update table</button>";
 					echo "</form>";
 				}
@@ -248,9 +232,9 @@
 	?>
 
 	<?php
-		if (isset($_POST['updateExistingUser'])) 
+		if (isset($_POST['updateExistingActor'])) 
 		{
-			echo "<h2>Update an existing user</h2>";
+			echo "<h2>Update an existing Actor</h2>";
 			//show list of users, then ask what you want to change and then do accordingly
 			$allUsernames = mysqli_query($connection, "SELECT * FROM user");
 			echo "<form action = \"\" method = \"post\">";
@@ -324,9 +308,8 @@
 		}
 	?>
 	<br><br>
-	<a href="admin_choice.php">Link to Previous Page</a>
+	<a href="admin_editEntertainmentInfo.php">Link to Previous Page</a>	<br><br>
+    <a href="./../index.php">Link to Main Page</a>
 	<?php mysqli_close($connection); ?>		
-	<br><br>
-	<br><br>
 </body>
 </html>

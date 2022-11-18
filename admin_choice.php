@@ -3,6 +3,10 @@
 		{ 
 			$username = $_GET['username'];
 		}
+		else
+		{
+			$username = 'Administrator';
+		}
 ?>
 		
 
@@ -25,9 +29,12 @@
 	<button name = "addNewAdmin" type="submit">Add New Admin</button>
 	</form>	
 	
-	<form style = "width: 200px" action="admin_editEntertainmentInfo.php"  method="post">
+	<!-- Updated so that all information about entertainment is in the same folder -->
+	<form style = "width: 200px" action="./admin_editEntertainment/admin_editEntertainmentInfo.php"  method="post">
 	<button type="submit">Edit Entertainment Information</button>
 	</form>	
+	<br><br>
+	<a href="./index.php">Link to Main Page</a>
 	
 </body>
 </html>
