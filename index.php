@@ -8,13 +8,17 @@
 </head>
 <body style = "flex-direction: column">
 	<h2>Welcome to Entertainment Rating System </h2>
-	<form style = "width: 200px" action="user_login.php"  method="post">
-	<button style = "float:middle"  type="submit" action="user_login.php">User Login Page
+	<form style = "width: 200px" action="./user_login/user_login.php"  method="post">
+	<button style = "float:middle"  type="submit" action="./user_login/user_login.php">User Login Page
 	</button>	
 	</form>
 	
 	<form style = "width: 200px" action="admin_login.php"  method="post">
 	<button type="submit">Admin Login Page</button>
+	</form>	
+
+	<form style = "width: 200px" action="newRegister.php"  method="post">
+	<button type="submit">Register New User</button>
 	</form>	
 	
 </body>

@@ -9,23 +9,22 @@
 <body style = "flex-direction: column; justify-content:normal">
 	<h2>Add/Edit Entertainment Information </h2>
 
-	<form>
-		<form style = "width: 200px" action="admin_AddNewAdmin.php"  method="post">
+	<div>
+	<br>
+		<form style = "width: 200px ;height:120px; float:left" action="admin_editProdCompany.php"  method="post">
 			<button name = "edit_production_company" type = "submit">Edit Production Company Database</button>
+		</form>
+		<form style = "width: 200px ; height:120px ; float:right" action="admin_editHIRES.php"  method="post">
+			<button name = "edit_HIRES" action="admin_editHIRES.php"type = "submit">Edit HIRES Database</button>
+		</form>
+		<form style = "width: 200px ; height:120px ; float:right" action="admin_editDirector.php"  method="post">
+			<button name = "edit_director" action="admin_editDirector.php"type = "submit">Edit Director Database</button>
+		</form>
 
-		<form style = "width: 200px" action="admin_AddNewAdmin.php"  method="post">
-			<button name = "edit_director" type = "submit">Edit Director Database</button>
-		
-		<br><br><br>
-		<form style = "width: 200px" action="admin_AddNewAdmin.php"  method="post">
-			<button name = "edit_hires" type = "submit">Edit Hires Database</button>
 	
-	</form>	
-
-	<h2>Add/update production company </h2>
-	<h2>add/update director </h2>
-		<h2>update hires table </h2>
-
+		<br><br><br><br><br><br><br>
+		
+	</div>
 
 	<form>
 
@@ -47,11 +46,9 @@
 	<form style = "width: 200px" action="admin_editActor.php"  method="post">
 		<button name = "edit_actor" type = "submit">Edit Actor Information</button>
 	</form>	
+	<br>
+	<br>
 
-	<h2>add/update actor </h2>
-		<h2>update acts_in table </h2>
-
-
-	<a href="./../admin_choice.php">Link to Previous Page</a>	
+	<a style = "align: centre" href="./../admin_choice.php">Link to Previous Page</a>
 </body>
 </html>
