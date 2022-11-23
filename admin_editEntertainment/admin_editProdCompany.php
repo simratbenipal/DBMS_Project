@@ -109,7 +109,7 @@
 				//should be good to prevent SQL injections
 				//check for ;  =  -  ' '  \
 				//if the username or password contains, then stop otherwise execute the query
-				if(str_contains($newName, ';')|| str_contains($newName, '=') || str_contains($newName, '-')|| str_contains($newName, ' ') ||  str_contains($newName, '\\') )
+				if(str_contains($newName, ';')|| str_contains($newName, '=') || str_contains($newName, '-')|| str_contains($newName, '  ') ||  str_contains($newName, '\\') )
 				{
 					echo "<p class = \"error\">";
 					echo "Invalid characters in Name, try again<br>";
@@ -335,7 +335,7 @@
 		}
 	?>
 	<br><br>
-	<a href="admin_editEntertainmentInfo.php">Link to Previous Page</a>	<br><br>
+	<a href="admin_editInfo.php">Link to Previous Page</a>	<br><br>
     <a href="./../index.php">Link to Main Page</a>
 	<?php mysqli_close($connection); ?>		
 </body>

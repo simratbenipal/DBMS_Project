@@ -19,7 +19,7 @@
 		}
 </style>
 </head>
-<body style = "flex-direction: column">
+<body style = "flex-direction: column; justify-content:normal">
 	<h2>Editing User Information </h2>
 	<h2>Current Users in the System</h2>
 	<?php 

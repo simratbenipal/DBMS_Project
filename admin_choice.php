@@ -30,7 +30,7 @@
 	</form>	
 	
 	<!-- Updated so that all information about entertainment is in the same folder -->
-	<form style = "width: 200px" action="./admin_editEntertainment/admin_editEntertainmentInfo.php"  method="post">
+	<form style = "width: 200px" action="./admin_editEntertainment/admin_editInfo.php"  method="post">
 	<button type="submit">Edit Entertainment Information</button>
 	</form>	
 	<br><br>

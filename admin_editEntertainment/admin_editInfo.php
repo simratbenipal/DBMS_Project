@@ -3,11 +3,11 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>Edit Entertainment Information</title>
+	<title>Edit Information</title>
 	<link rel="stylesheet" type="text/css" href="./../style.css">
 </head>
 <body style = "flex-direction: column; justify-content:normal">
-	<h2>Add/Edit Entertainment Information </h2>
+	<h2>Add/Edit Information in the System </h2>
 
 	<div>
 	<br>
@@ -26,16 +26,19 @@
 		
 	</div>
 
-	<form>
+	<br><br><br><br>
 
-		<button name = "edit_entertainment" type = "submit">Edit Entertainment Database</button>
+	<div>
+		<br>
+		<form style = "width: 300 ;height:170px; float:right" action="admin_editEntertainment.php"  method="post">
+		<label>Can edit information about Entertainment, including which platform this entertainment is available (AVAILABLE_ON) and in which countries this entertianment is available (AVAILABLE_IN)</label> <br><br>
+			<button name = "edit_entertainment" style = "float:none" type = "submit">Edit Entertainment</button>
+			<br><br>
+		</form>
+		<br><br><br><br><br><br><br>
+	</div>
 
-		<button name = "edit_available_IN" type = "submit">Edit Available IN</button>
-		<br><br><br>
-
-		<button name = "edit_available_ON" type = "submit">Edit Available ON</button>
-
-	</form>	
+	<br><br><br><br>
 
 	<h2>add/update entertainment </h2>
 		<h2>update available IN table </h2>

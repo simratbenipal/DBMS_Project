@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>Edit User Information</title>
+	<title>Edit Entertainment Information</title>
 	<link rel="stylesheet" type="text/css" href="./../style.css">
 
 	<style>
@@ -20,8 +20,9 @@
 </style>
 </head>
 <body style = "flex-direction: column; justify-content:normal">
-	<h2>Editing Actor Information </h2>
-	<h2>Current Actors in the System</h2>
+	<h2>Editing Entertainment Information</h2>
+	<h2>Current Entertainment information in the System</h2>
+	
 	<?php 
 		$connection = mysqli_connect("localhost", "root", "","entertainment_db");
 		//check if connection was made properly or no
@@ -30,20 +31,28 @@
 			echo "Failed to connect: " . mysqli_connect_error();
 		}
 		//echo "Connection made to database ";
-		$result = mysqli_query($connection, "SELECT * FROM actor");
+		$result = mysqli_query($connection, "SELECT E.eid, E.name AS Ename, E.type, E.rating, E.date, PC.name AS PC_name, PC.address,D.ssn, D.fname, D.lname FROM entertainment AS E, productioncompany AS PC, director as D WHERE E.prod_pid = PC.pid AND E.dir_ssn = D.ssn");
 		echo "<table style = \"background: #D0E4F5;border: 1px solid #AAAAAA;
 		padding: 3px 2px;font-size: 20px;\" border = '1'>
 			<tr>
-			<th>SSN</th>
-			<th>First Name</th>
-			<th>Last Name</th>
+			<th>EID</th>
+			<th>Name</th>
+			<th>Type</th>
+			<th>Rating</th>
+			<th>Date</th>
+			<th>Production Company, Location</th>
+			<th>Director Name</th>
 			</tr>";
 		while($row = mysqli_fetch_array($result))
 		{
 			echo "<tr>";
-			echo "<td>" . $row['ssn'] . "</td>";
-			echo "<td>" . $row['fname'] . "</td>";
-			echo "<td>" . $row['lname'] . "</td>";
+			echo "<td>" . $row['eid'] . "</td>";
+			echo "<td>" . $row['Ename'] . "</td>";
+			echo "<td>" . $row['type'] . "</td>";
+			echo "<td>" . $row['rating'] . "</td>";
+			echo "<td>" . $row['date'] . "</td>";
+		   	echo "<td>" . $row['PC_name'] ." , " . $row['address'] .  "</td>";
+		   	echo "<td>" . $row['fname'] . " " . $row['lname'] . "</td>";
 			echo "</tr>";
 
 		}
@@ -52,11 +61,13 @@
 	
 	?>
 	<br><br>
-	<!-- make these work on the same page -->
+	
+	
 	<form style = "width: 200px" action=""  method="post">
-	<button name = "addNewActor" style = "float:middle"  type="submit">Add New Actor
+	<button name = "addNewEntertainment" style = "float:middle"  type="submit">Add New Entertainment
 	</button>
 	</form>
+	<!--
 
 	<form style = "width: 200px" action=""  method="post">
 	<button name = "deleteActor" type="submit">Delete an Actor</button>
@@ -65,45 +76,103 @@
 	<form style = "width: 200px" action=""  method="post">
 	<button name = "updateExistingActor" type="submit">Add Data into ACTS_IN (under const)</button>
 	</form>	
-
+	-->
 	<?php
-		if (isset($_POST['addNewActor'])) 
+		if (isset($_POST['addNewEntertainment'])) 
 		{
-			echo "<h2>Adding a New Actor</h2>";
-			//for to ask for user information
-			//ask for SSN
-			//ask for fname
-			//ask for lname
+			//ask for unique eid
+			//ask for name
+			//drop down for type
+			//drop down for rating
+			//date released
+			//production company (from existing)
+			//director (from existing)
+			echo "<h2>Adding a New Entertainment</h2>";
 			echo "<form action = \"\" method = \"post\">";
-			echo "<label>New SSN</label>";
-			echo "<input type=\"text\" name=\"newSSN\" placeholder=\"Enter SSN (xxx-xxx-xxxx)\"><br>";
-			echo "<label>First Name</label>";
-			echo "<input type=\"text\" name=\"newfname\" placeholder=\"Enter First Name\"><br>";
-            echo "<label>Last Name</label>";
-			echo "<input type=\"text\" name=\"newlname\" placeholder=\"Enter Last Name\"><br>";
+			
+			echo "<label>New Entertainment ID</label>";
+			echo "<input type=\"number\" name=\"newEID\" placeholder=\"Enter EID (xxxx)\"><br>";
+			
+			echo "<label>Name</label>";
+			echo "<input type=\"text\" name=\"newName\" placeholder=\"Enter Name\"><br>";
+			
+			//https://www.w3schools.com/tags/tag_select.asp
+			echo "<label>Select Type</label>";
+			echo "<select name = \"type\" id=\"type\">" ;
+			echo "<option value= \"Sci-Fi\"> Sci-Fi </option>";
+			echo "<option value= \"Fiction\"> Fiction </option>";
+			echo "<option value= \"Action\"> Action </option>";
+			echo "<option value= \"Comedy\"> Comedy </option>";
+			echo "</select>";
+			echo "<br>";
+
+			echo "<label>Rating&nbsp&nbsp</label>";
+			echo "<select name = \"entertainment_rating\" id=\"entertainment_rating\">" ;
+			echo "<option value= \"0\"> 0 (Default)</option>";
+			echo "<option value= \"1\"> 1 </option>";
+			echo "<option value= \"2\"> 2 </option>";
+			echo "<option value= \"3\"> 3 </option>";
+			echo "<option value= \"4\"> 4 </option>";
+			echo "<option value= \"5\"> 5 </option>";
+			echo "</select>";
+			echo  "<br>";echo  "<br>";
+
+			echo "<label>Rating&nbsp&nbsp</label>";
+			echo "<input type = \"date\" id = \"release_date\" name = \"release_date\" value = \"2018-07-22\" min = \"2018-01-01\" max = \"2018-12-31\">";
+
+			//since director and production company are linked 
+			$result = mysqli_query($connection, "SELECT * FROM hires, productioncompany, director WHERE prod_pid = pid AND director_ssn = ssn");
+			echo "<label>Select Prodcution Company and Director</label>";
+			echo "<select name = \"pc_dir\" id=\"pc_dir\">" ;
+			echo  "<br>";
+			while($row = mysqli_fetch_array($result))
+			{
+				echo "<option value= \"" . $row['pid'] . "," . $row['ssn'] . "\">". $row['name'] . " , " . $row['fname'] . " " . $row['fname'] . " </option>";
+			}
+
+			echo "</select>";
+			echo  "<br>";echo  "<br>";
 
 			echo "<button type = \"submit\"> Add Data into Database</button>";
 			echo "</form>";
 		}
 
-		if ((isset($_POST['newSSN'])) && (isset($_POST['newfname'])) && (isset($_POST['newlname'])))
+		if ((isset($_POST['newEID'])) && (isset($_POST['newName'])) && (isset($_POST['type'])) && (isset($_POST['entertainment_rating'])) && (isset($_POST['release_date'])) &&  (isset($_POST['pc_dir'])))
 		{
-			$newSSN 	= $_POST['newSSN'];
-			$newfname 	= $_POST['newfname'];
-			$newlname = $_POST['newlname'];
+			$newEID 	= $_POST['newEID'];
+			$newName 	= $_POST['newName'];
+			$type 		= $_POST['type'];
+			$entertainment_rating = $_POST['entertainment_rating'];
+			$release_date = $_POST['release_date'];
+			$pc_dir			= $_POST['pc_dir'];
 
+			echo $newEID;
+			echo "<br>";
+			echo $newName;	
+			echo "<br>";
+			echo $type;
+			echo "<br>";
+			echo $entertainment_rating;
+			echo "<br>";
+			echo $release_date;
+			echo "<br>";
+			echo $pc_dir;
+			echo "<br>";
+		
+			
+/*
 			//https://www.geeksforgeeks.org/php-strlen-function/
 			//https://www.w3schools.com/php/func_var_empty.asp
 			if (empty($newSSN) || empty($newfname) || empty($newlname))
-            {
-                echo "<p class = \"error\">";
+			{
+				echo "<p class = \"error\">";
 				echo "Values cannot be empty<br> Enter Data Again</p>";
-            }
-            else if (strlen($newSSN) < 12)
-            {
-                echo "<p class = \"error\">";
-                echo "Enter a valid SSN<br> Enter Data Again</p>";
-            }
+			}
+			else if (strlen($newSSN) < 12)
+			{
+				echo "<p class = \"error\">";
+				echo "Enter a valid SSN<br> Enter Data Again</p>";
+			}
 			else
 			{
 				//https://www.php.net/manual/en/function.str-contains.php
@@ -122,7 +191,7 @@
 					echo "Invalid characters in Password, try again<br>";
 					echo "</p>";
 				}
-                else if(str_contains($newSSN, ';')|| (str_contains ($newSSN, '=')) || str_contains($newSSN, '\\') ||  str_contains($newSSN, ' ') || str_contains($newSSN, '--'))
+				else if(str_contains($newSSN, ';')|| (str_contains ($newSSN, '=')) || str_contains($newSSN, '\\') ||  str_contains($newSSN, ' ') || str_contains($newSSN, '--'))
 				{
 					echo "<p class = \"error\">";
 					echo "Invalid characters in SSN, try again<br>";
@@ -150,14 +219,15 @@
 					echo "<p class = \"error\">";
 					echo "Error, please check the data and enter again</p>";
 					//header("Location: admin_editUserInfo.php");
-                    echo $e;
+					echo $e;
 				}	
 			}
 			}
+			*/
 		}
 	?>
 
-	
+	<!--
 	<?php
 		if (isset($_POST['deleteActor'])) 
 		{
@@ -336,8 +406,9 @@
 		}
 	?>
 	<br><br>
+	-->
 	<a href="admin_editInfo.php">Link to Previous Page</a>	<br><br>
-    <a href="./../index.php">Link to Main Page</a>
+	<a href="./../index.php">Link to Main Page</a>
 	<?php mysqli_close($connection); ?>		
 </body>
 </html>

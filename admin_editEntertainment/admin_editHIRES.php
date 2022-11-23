@@ -235,7 +235,7 @@
 		}
 	?>
 	<br><br>
-	<a href="admin_editEntertainmentInfo.php">Link to Previous Page</a>	<br><br>
+	<a href="admin_editInfo.php">Link to Previous Page</a>	<br><br>
     <a href="./../index.php">Link to Main Page</a>
 	<?php mysqli_close($connection); ?>		
 </body>
