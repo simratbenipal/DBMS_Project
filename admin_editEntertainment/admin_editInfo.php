@@ -39,16 +39,12 @@
 	</div>
 
 	<br><br><br><br>
-
-	<h2>add/update entertainment </h2>
-		<h2>update available IN table </h2>
-		<h2>update available ON table </h2>
-
-
+	<div>
+		<form style = "width: 200px; height:110px;" action="admin_editActor.php"  method="post">
+			<button name = "edit_actor" type = "submit">Edit Actor Information</button>
+		</form>
 		
-	<form style = "width: 200px" action="admin_editActor.php"  method="post">
-		<button name = "edit_actor" type = "submit">Edit Actor Information</button>
-	</form>	
+	</div>	
 	<br>
 	<br>
 

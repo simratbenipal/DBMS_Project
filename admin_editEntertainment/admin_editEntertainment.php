@@ -39,7 +39,7 @@
 			<th>Name</th>
 			<th>Type</th>
 			<th>Rating</th>
-			<th>Date</th>
+			<th>Release Date</th>
 			<th>Production Company, Location</th>
 			<th>Director Name</th>
 			</tr>";
@@ -58,25 +58,25 @@
 		}
 		echo "</table>";
 
-	
 	?>
 	<br><br>
 	
-	
+
 	<form style = "width: 200px" action=""  method="post">
 	<button name = "addNewEntertainment" style = "float:middle"  type="submit">Add New Entertainment
 	</button>
 	</form>
-	<!--
+	
 
 	<form style = "width: 200px" action=""  method="post">
-	<button name = "deleteActor" type="submit">Delete an Actor</button>
+	<button name = "deleteEntertainment" type="submit">Delete an Entertainment</button>
 	</form>	
 	
 	<form style = "width: 200px" action=""  method="post">
-	<button name = "updateExistingActor" type="submit">Add Data into ACTS_IN (under const)</button>
+	<button name = "updateEntertainment" type="submit">Update Entertainment</button>
 	</form>	
-	-->
+
+	
 	<?php
 		if (isset($_POST['addNewEntertainment'])) 
 		{
@@ -145,73 +145,50 @@
 			$entertainment_rating = $_POST['entertainment_rating'];
 			$release_date = $_POST['release_date'];
 			$pc_dir			= $_POST['pc_dir'];
+			//$pc_dir --> production company id and director ssn
+			//these must be separated based on ',' 
 
-			echo $newEID;
-			echo "<br>";
-			echo $newName;	
-			echo "<br>";
-			echo $type;
-			echo "<br>";
-			echo $entertainment_rating;
-			echo "<br>";
-			echo $release_date;
-			echo "<br>";
-			echo $pc_dir;
-			echo "<br>";
-		
-			
-/*
-			//https://www.geeksforgeeks.org/php-strlen-function/
-			//https://www.w3schools.com/php/func_var_empty.asp
-			if (empty($newSSN) || empty($newfname) || empty($newlname))
+            //https://www.geeksforgeeks.org/php-explode-function/
+            $splittedString = explode(",", $pc_dir);
+            $prodPID = $splittedString[0];
+            $director_ssn = $splittedString[1];
+
+			//check if the values are correct
+			//ADDING INTO ENTERTAINMENT TABLE
+			echo "<form>";
+			if(str_contains($newName, ';')|| str_contains($newName, '=') || str_contains($newName, '--')|| str_contains($newName, '  ') ||  str_contains($newName, '\\') )
 			{
 				echo "<p class = \"error\">";
-				echo "Values cannot be empty<br> Enter Data Again</p>";
+				echo "Invalid characters in Name<br> Enter Data Again</p>";
 			}
-			else if (strlen($newSSN) < 12)
+			else if(empty($newEID)|| empty($newName))
 			{
 				echo "<p class = \"error\">";
-				echo "Enter a valid SSN<br> Enter Data Again</p>";
+				echo "Cannot have empty Name or EID<br> Enter Data Again</p>";
+			}
+			else if (strlen($newEID) < 5)
+			{
+				echo "<p class = \"error\">";
+				echo "EID should have at least 4 numbers <br> Enter Data Again</p>";
 			}
 			else
 			{
-				//https://www.php.net/manual/en/function.str-contains.php
-				//should be good to prevent SQL injections
-				//check for ;  =  -  ' '  \
-				//if the username or password contains, then stop otherwise execute the query
-				if(str_contains($newfname, ';')|| str_contains($newfname, '=') || str_contains($newfname, '-')|| str_contains($newfname, ' ') ||  str_contains($newfname, '\\') )
-				{
-					echo "<p class = \"error\">";
-					echo "Invalid characters in First Name, try again<br>";
-					echo "</p>";
-				}
-				else if(str_contains($newlname, ';')|| (str_contains ($newlname, '=')) || str_contains($newlname, '\\') ||  str_contains($newlname, ' ') || str_contains($newlname, '-'))
-				{
-					echo "<p class = \"error\">";
-					echo "Invalid characters in Password, try again<br>";
-					echo "</p>";
-				}
-				else if(str_contains($newSSN, ';')|| (str_contains ($newSSN, '=')) || str_contains($newSSN, '\\') ||  str_contains($newSSN, ' ') || str_contains($newSSN, '--'))
-				{
-					echo "<p class = \"error\">";
-					echo "Invalid characters in SSN, try again<br>";
-					echo "</p>";
-				}
-				else
-				{
+				//Add data into entertainment table
 				//data is good, add to sql database
-				$sql_insert = "INSERT INTO actor (ssn, fname, lname) VALUES('$newSSN','$newfname', '$newlname')";
+				$sql_insert = "INSERT INTO entertainment (eid, name, type, rating, date, prod_pid, dir_ssn) VALUES('$newEID','$newName', '$type' , '$entertainment_rating' , '$release_date' , '$prodPID' , '$director_ssn' )";
 				try
 				{
 					mysqli_query($connection, $sql_insert);
+					echo "<form>";
 					echo "<p class = \"goodData\">";
 					echo "Data added successfully to the database";
 					echo "</p>";
 					//header("Location: admin_editUserInfo.php");
 
 					echo "<br>";
-					echo "<form style = \"width: 200px\" action=\"admin_editActor.php\"  method = \"post\">";
+					echo "<form style = \"width: 200px\" action=\"admin_editEntertainment.php\"  method = \"post\">";
 					echo "<button name = \"\" type = \"submit\">Click here to update table</button>";
+					echo "</form>";
 					echo "</form>";
 				}
 				catch (Exception $e)
@@ -219,194 +196,119 @@
 					echo "<p class = \"error\">";
 					echo "Error, please check the data and enter again</p>";
 					//header("Location: admin_editUserInfo.php");
-					echo $e;
+					//echo $e;
 				}	
 			}
-			}
-			*/
+			echo "</form>";
 		}
 	?>
 
-	<!--
 	<?php
-		if (isset($_POST['deleteActor'])) 
+		if (isset($_POST['deleteEntertainment'])) 
 		{
-			echo "<h2>Deleting an Actor</h2>";
-			//show a drop down of existing actors
+			echo "<h2>Deleting an Entertainment</h2>";
+			//show a drop down of existing entertainment
 			//have a checkbox to make sure 
 			//delete from database
+			//data is good, add to sql database
 			
-			$allActors = mysqli_query($connection, "SELECT * FROM actor");
+			$allEntertainment = mysqli_query($connection, "SELECT * FROM entertainment");
 			echo "<form action = \"\" method = \"post\">";
-			echo "<label>Select Actor to delete : </label>";
-			echo "<select name = \"selectedUser\" id=\"selectedUserId\">" ;
+			echo "<label>Select Entertainment to delete : </label>";
+			echo "<select name = \"selectedEntertainment\" id=\"selectedEntertainmentId\">" ;
 			
-			while($row = mysqli_fetch_array($allActors))
+			while($row = mysqli_fetch_array($allEntertainment))
 			{
 				//echo  $row['Username'] ; 
 				//https://www.w3schools.com/tags/tag_select.asp
-				echo "<option value = ".  $row['ssn']. "> (".  $row['ssn'] .") ". $row['fname'] ." ". $row['lname']."</option>";
+				echo "<option value = ".  $row['eid']. "> (".  $row['eid'] .") ". $row['name'] . "</option>";
 			}
 			echo "</select>";
 			echo "<br><br>";
-			echo "<label for = \"checkbox\"> Do you want to remove the selected User : </label>";
+			echo "<label for = \"checkbox\"> Do you want to remove the selected Entertainment : </label>";
 			echo  "<input type = \"checkbox\" name = \"checkbox\" id = \"checkedId\" </input> ";
 			echo "<button type = \"submit\">Delete user from Database</button>";
 			echo "</form>";
 			echo "<br>";
 		}
 
-		if (isset($_POST['selectedUser']) )
+		if (isset($_POST['selectedEntertainment']) )
 		{
-			$selectedUser 	= $_POST['selectedUser'];
+			echo "<form>";
+			$toBeDetetedEntertainment 	= $_POST['selectedEntertainment'];
 			if(!isset($_POST['checkbox']))
 			{
 				echo "<p class = \"error\">";
 				echo "Checkbox not selected<br>";
-				echo "Actor not deleted<br>";
+				echo "Entertainment not deleted<br>";
 				echo "</p>";
-
 			}
-			else if (strcmp ($selectedUser, "1234") == 0)
+			else if (strcmp ($toBeDetetedEntertainment, "1") == 0)
 			{
 				echo "<p class = \"error\">";
-				echo "Cannot delete 'John Doe'<br>";
+				echo "Cannot delete 'The Invincible'<br>";
 				echo "</p>";
 			}
 			else
 			{
 				//data is good, delete from database
-				$sql_delete = "DELETE FROM actor WHERE ssn = '$selectedUser'";
+				$sql_delete = "DELETE FROM entertainment WHERE eid = '$toBeDetetedEntertainment'";
 				try
 				{
 					mysqli_query($connection, $sql_delete);
 					echo "<p class = \"goodData\">";
-					echo "Actor deleted successfully from the database";
+					echo "Entertainment deleted successfully from the database";
 					echo "</p>";
 					//header("Location: admin_editUserInfo.php");
-
 					echo "<br>";
-					echo "<form style = \"width: 200px\" action=\"admin_editActor.php\"  method = \"post\">";
+					echo "<form style = \"width: 200px\" action=\"admin_editEntertainment.php\"  ethod = \"post\">";
 					echo "<button name = \"\" type = \"submit\">Click here to update table</button>";
 					echo "</form>";
 				}
 				catch (Exception $e)
 				{
 					echo "<p class = \"error\">";
-					echo "Error, Unable to delete the actor<br>Check for Foreign Key Constraints</p>";
+					echo "Error, Unable to delete the Entertainment<br>Check for Foreign Key Constraints</p>";
 					//header("Location: admin_editUserInfo.php");
 				}	
 			}
+			echo "</form>";
 		}	
 	?>
 
 	<?php
-		if (isset($_POST['updateExistingActor'])) 
+		if (isset($_POST['updateEntertainment'])) 
 		{
-			echo "<h2>Update an existing Actor Information</h2>";
-			echo "<h5>(Updates ACTS_IN table)</h5>";
-			//show list of users, then ask what you want to change and then do accordingly
-			$allActors = mysqli_query($connection, "SELECT * FROM actor");
+			echo "<h2>Update an Entertainment Information</h2>";
+			$allEntertainment = mysqli_query($connection, "SELECT * FROM entertainment");
 			echo "<form action = \"\" method = \"post\">";
-			echo "<label>Select Actor: &nbsp  &nbsp &nbsp&nbsp &nbsp &nbsp &nbsp &nbsp</label>";
-			echo "<select name = \"selectedActor\" id=\"selectedActor\">" ;
+			echo "<label>Select Entertainment: &nbsp  &nbsp &nbsp&nbsp &nbsp &nbsp &nbsp &nbsp</label>";
+			echo "<select name = \"selectedEntertainmentDelete\" id=\"selectedEntertainment\">" ;
 			
-			while($row = mysqli_fetch_array($allActors))
+			while($row = mysqli_fetch_array($allEntertainment))
 			{
-				//echo  $row['Username'] ; 
 				//https://www.w3schools.com/tags/tag_select.asp
-				echo "<option value = ".  $row['ssn']. "> (".  $row['ssn'] .") ". $row['fname'] ." ". $row['lname']."</option>";
+				echo "<option value = ".  $row['eid']. "> (".  $row['eid'] .") ". $row['name'] . "</option>";
 			}
 			echo "</select>";
+			echo "<br>";
+			echo "<br>";
+			echo "<button type = \"submit\">Edit information</button>";
+			echo "</form>";
 			
 			echo "<br>";
-			
-			//show list of users, then ask what you want to change and then do accordingly
-			$allActors = mysqli_query($connection, "SELECT * FROM entertainment");
-			echo "<form action = \"\" method = \"post\">";
-			echo "<label>Select Entertainment: </label>";
-			echo "<select name = \"selectedEntertainment\" id=\"selectedEntertainment\">" ;
-			
-			while($row = mysqli_fetch_array($allActors))
-			{
-				//echo  $row['Username'] ; 
-				//https://www.w3schools.com/tags/tag_select.asp
-				echo "<option value = ".  $row['eid']. "> (".  $row['eid'] .") ". $row['name'] ."</option>";
-			}
-			echo "</select>";
-			echo "<br><br><br>";		
-			echo "<button type = \"submit\">Update table</button>";
-			echo "</form>";
-
 		}
 	
-		if ((isset($_POST['selectedActor'])) || (isset($_POST['selectedEntertainment'])))
+		if (isset($_POST['selectedEntertainmentDelete'])) 
 		{
-			$actorSSN = $_POST['selectedActor'];
-			$entertainmentEID = $_POST['selectedEntertainment'];
-			$query = mysqli_query($connection, "SELECT fname, lname FROM actor WHERE ssn = '$actorSSN'");
-			//this will result only one row of data as we are searching through primary key
-			while($row = mysqli_fetch_array($query))
-			{
-				$actorFirstName = $row['fname'];
-				$actorLastName = $row['lname'];
-			}
-			$actorName = $actorFirstName ." " . $actorLastName;
-
-			$query = mysqli_query($connection, "SELECT name FROM entertainment WHERE eid = '$entertainmentEID'");
-			//this will result only one row of data as we are searching through primary key
-			while($row = mysqli_fetch_array($query))
-			{
-				$entertainmentName = $row['name'];
-			}
-			echo "<br>";
-			echo "<form>";
-			echo "Actor = '" . $actorName . "' ACTS_IN '" . "Movie Name = ". $entertainmentName . "'<br>";
-
-			//check if this data already exists in the ACTS_IN table
-			$check = "SELECT * FROM ACTS_IN WHERE actor_ssn = $actorSSN AND $entertainmentEID";
-			$query = mysqli_query($connection, $check);
-			//https://stackoverflow.com/questions/22677992/count-length-of-array-php
-			$row_num = mysqli_num_rows($query);
-			//echo $row_num;
-			//if $row = 0 --> add data else show "data exists'
-			if($row_num <= 1)
-			{
-				$insert_ACTS_IN = "INSERT INTO ACTS_IN (actor_ssn, entertainment_eid) VALUES ('$actorSSN',$entertainmentEID)";
-				try
-				{
-					mysqli_query($connection, $insert_ACTS_IN);
-					echo "<p class = \"goodData\">";
-					echo "Data successfully in the database";
-					echo "</p>";
-					//header("Location: admin_editUserInfo.php");
-					echo "<br>";
-				}
-				catch (Exception $e)
-				{
-					echo "<p class = \"error\">";
-					echo "Error, Unable to update the user</p>";
-					//header("Location: admin_editUserInfo.php");
-					echo $e;
-				}
-			}	
-			else
-			{
-				//$row > 0, no need to add again
-				echo "<p class = \"goodData\">";
-				echo "Data already in table</p>";
-			}
-			echo "</form>";
-			echo "<br><br>";
-
-			echo "<form style = \"width: 200px\" action=\"admin_editActor.php\"  method = \"post\">";
-			echo "<button name = \"\" type = \"submit\">Refresh Page</button>";
-			echo "</form>";
-	
+			$selectedEntertainmentEID = $_POST['selectedEntertainmentDelete'];
+			echo "<h2>Editing </h2>";
+			echo $selectedEntertainmentEID;
+			
 		}
 	?>
 	<br><br>
-	-->
+
 	<a href="admin_editInfo.php">Link to Previous Page</a>	<br><br>
 	<a href="./../index.php">Link to Main Page</a>
 	<?php mysqli_close($connection); ?>		
