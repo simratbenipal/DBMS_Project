@@ -17,6 +17,17 @@
 			border-radius: 5px;
 			margin: 20px auto;
 		}
+		select
+		{
+			width: max-content;
+			size: legal;
+			font-size: medium;
+			font-style: initial;
+			font-family: sans-serif;
+			font-weight: bold;
+			border: solid;
+		}
+
 </style>
 </head>
 <body style = "flex-direction: column; justify-content:normal">
@@ -78,6 +89,7 @@
 
 	
 	<?php
+		//Adding new information into the system
 		if (isset($_POST['addNewEntertainment'])) 
 		{
 			//ask for unique eid
@@ -88,7 +100,7 @@
 			//production company (from existing)
 			//director (from existing)
 			echo "<h2>Adding a New Entertainment</h2>";
-			echo "<form action = \"\" method = \"post\">";
+			echo "<form style=\"width:600px\"action = \"\" method = \"post\">";
 			
 			echo "<label>New Entertainment ID</label>";
 			echo "<input type=\"number\" name=\"newEID\" placeholder=\"Enter EID (xxxx)\"><br>";
@@ -104,7 +116,7 @@
 			echo "<option value= \"Action\"> Action </option>";
 			echo "<option value= \"Comedy\"> Comedy </option>";
 			echo "</select>";
-			echo "<br>";
+			echo "<br>";echo "<br>";echo "<br>";
 
 			echo "<label>Rating&nbsp&nbsp</label>";
 			echo "<select name = \"entertainment_rating\" id=\"entertainment_rating\">" ;
@@ -117,7 +129,7 @@
 			echo "</select>";
 			echo  "<br>";echo  "<br>";
 
-			echo "<label>Rating&nbsp&nbsp</label>";
+			echo "<label>Release Date&nbsp&nbsp</label>";
 			echo "<input type = \"date\" id = \"release_date\" name = \"release_date\" value = \"2018-07-22\" min = \"2018-01-01\" max = \"2018-12-31\">";
 
 			//since director and production company are linked 
@@ -137,6 +149,7 @@
 			echo "</form>";
 		}
 
+		//error checking the names and other information
 		if ((isset($_POST['newEID'])) && (isset($_POST['newName'])) && (isset($_POST['type'])) && (isset($_POST['entertainment_rating'])) && (isset($_POST['release_date'])) &&  (isset($_POST['pc_dir'])))
 		{
 			$newEID 	= $_POST['newEID'];
@@ -204,6 +217,7 @@
 	?>
 
 	<?php
+		//if delete entertainment button is pressed
 		if (isset($_POST['deleteEntertainment'])) 
 		{
 			echo "<h2>Deleting an Entertainment</h2>";
@@ -232,6 +246,7 @@
 			echo "<br>";
 		}
 
+		//Deleting the selected entertainment, only possible if the checkbox is selected
 		if (isset($_POST['selectedEntertainment']) )
 		{
 			echo "<form>";
@@ -277,13 +292,13 @@
 	?>
 
 	<?php
-		if (isset($_POST['updateEntertainment'])) 
-		{
+		//update entertainment buttom is pressed
+		if (isset($_POST['updateEntertainment'])) {
 			echo "<h2>Update an Entertainment Information</h2>";
 			$allEntertainment = mysqli_query($connection, "SELECT * FROM entertainment");
-			echo "<form action = \"\" method = \"post\">";
+			echo "<form style = \"width:600px\" action = \"\" method = \"post\">";
 			echo "<label>Select Entertainment: &nbsp  &nbsp &nbsp&nbsp &nbsp &nbsp &nbsp &nbsp</label>";
-			echo "<select name = \"selectedEntertainmentDelete\" id=\"selectedEntertainment\">" ;
+			echo "<select name = \"selectedEntertainment_edit\" id=\"selectedEntertainment\">" ;
 			
 			while($row = mysqli_fetch_array($allEntertainment))
 			{
@@ -293,24 +308,237 @@
 			echo "</select>";
 			echo "<br>";
 			echo "<br>";
-			echo "<button type = \"submit\">Edit information</button>";
+			echo "<button type = \"submit\"  name = \"selectedEntertainment_av_in\" >Show AVAILABLE_IN information</button>";
+			echo "<button type = \"submit\"  name = \"selectedEntertainment_av_on\" >Show AVAILABLE_ON information</button>";
 			echo "</form>";
 			
 			echo "<br>";
 		}
-	
-		if (isset($_POST['selectedEntertainmentDelete'])) 
-		{
-			$selectedEntertainmentEID = $_POST['selectedEntertainmentDelete'];
+		//getting which entertainment to edit
+		if (isset($_POST['selectedEntertainment_edit'])) {
 			echo "<h2>Editing </h2>";
-			echo $selectedEntertainmentEID;
+			echo "<form style = \"width:600px\">";
+			$selectedEntertainmentEID = $_POST['selectedEntertainment_edit'];			
+			//echo $selectedEntertainmentEID;
+			$result = mysqli_query($connection, "SELECT E.eid, E.name AS Ename, E.type, E.rating, E.date FROM entertainment AS E  WHERE E.eid = '$selectedEntertainmentEID' ");
+			while($row = mysqli_fetch_array($result))
+			{
+				$entertainmentName =  $row['Ename'];
+			}
+
+			//pressed the edit Available on button
+			if (isset($_POST['selectedEntertainment_av_on'])) {
+				echo "<p class = \"\">";
+				echo "'" . $entertainmentName . "' is AVAILABLE_ON : ";
+				echo "</p>";
 			
+				$allEntertainment_AO = mysqli_query($connection, "SELECT * FROM entertainment AS E, available_on AS AO, platform WHERE E.eid = AO.eid AND AO.url = platform.url AND E.eid = $selectedEntertainmentEID");
+				$i = 1;
+				echo "<table style = \"background: #D0E4F5;border: 1px solid #AAAAAA;
+						padding: 3px 2px;font-size: 20px;\" border = '1'>";
+				echo "<tr>";
+				echo "<th> </th>";
+				echo "<th>Entertainment Name</th>";
+				echo "<th>Platform Name</th>";
+				echo "<th>Platform URL</th>";
+				echo  "</tr>";
+				while($row = mysqli_fetch_array($allEntertainment_AO)) {
+					echo "<tr>";
+					echo "<td>" .  $i . "</td>";
+					echo "<td>" . $row['eid'] . "</td>";
+					echo "<td>" . $row['name'] . "</td>";
+					echo "<td>" . $row['url'] . "</td>";
+					echo "</tr>";
+					$i++;
+				}
+				echo "</table>";
+				echo "<br><br>";
+				echo "</form>";
+			
+
+				echo "<form style = \"width:600px\" action = \"\" method = \"post\">";
+				$allPlatform = mysqli_query($connection, "SELECT * FROM platform ");
+				echo "<label>Select which platform this entertainment is available on : </label>";
+				echo "<br><br>";
+				echo "<select name = \"selectedPlatform\" id=\"selectedPlatform\">" ;
+				while($row = mysqli_fetch_array($allPlatform)) {
+					echo "<option value = ".  $row['url'] ."," . $row['name'] . "," .$selectedEntertainmentEID . "> (".  $row['url'] .") ". $row['name'] . "</option>";
+				}
+				echo "</select>";
+				echo "<br><br>";
+
+				echo "<button type = \"submit\"  name = \"selectedEntertainment_av_on_edit\" >Add into database</button>";
+				echo "</form>";
+			}
+
+		
+			//pressed the available in button on the form
+			if (isset($_POST['selectedEntertainment_av_in'])) {
+				echo "<form style = \"width:600px\">";
+				echo "<p class = \"\">";
+				echo "This entertainment is AVAILABLE_IN : ";
+				echo "</p>";
+				$allEntertainment_AI = mysqli_query($connection, "SELECT * FROM entertainment AS E, available_in AS AI WHERE E.eid = AI.eid AND E.eid = $selectedEntertainmentEID");
+				$i = 1;
+				echo "<table style = \"background: #D0E4F5;border: 1px solid #AAAAAA;
+						padding: 3px 2px;font-size: 20px;\" border = '1'>";
+				echo "<tr>";
+				echo "<th> </th>";
+				echo "<th>Entertainment ID</th>";
+				echo "<th>Entertainment Name</th>";
+				echo "<th>Theatre Name</th>";
+				echo "<th>City Name</th>";
+				echo  "</tr>";
+				while($row = mysqli_fetch_array($allEntertainment_AI)) {
+					echo "<tr>";
+					echo "<td>" .  $i . "</td>";
+					echo "<td>" . $row['eid'] . "</td>";
+					echo "<td>" . $row['name'] . "</td>";
+					echo "<td>" . $row['theatre_name'] . "</td>";
+					echo "<td>" . $row['city_name'] . "</td>";
+					echo "</tr>";
+					$i++;
+				}
+				echo "</table>";
+				echo "<br><br>";
+				echo "</form>";
+
+				echo "<form style = \"width:600px\" action = \"\" method = \"post\">";
+				$allTheatre = mysqli_query($connection, "SELECT * FROM city_theater_name ");
+				echo "<label>Select which theatre this entertainment is available IN : </label>";
+				echo "<br><br>";
+				echo "<select name = \"selectedTheatre\" id=\"selectedTheatre\">" ;
+				while($row = mysqli_fetch_array($allTheatre)) {
+					echo "<option value = " . $row['theatre_name'] . "," . $row['city_name'] . "," .$selectedEntertainmentEID . ">" . $row['theatre_name'] . " , ". $row['city_name'] . "</option>";
+				}
+				echo "</select>";
+				echo "<br><br>";
+
+				echo "<button type = \"submit\"  name = \"selectedEntertainment_av_on_edit\" >Add into database</button>";
+				echo "</form>";
+			
+
+				echo "</form>";	
+			}
+		
 		}
+		//adding information about the new platform
+		if(isset($_POST['selectedPlatform'])) 
+		{
+			//echo $_POST['selectedPlatform'];
+			//The value of the option in html is "URL,Name_of_platform,EID"
+			//so we can split and add that into the table
+
+			echo "<form style = \"width:600px\">";
+            //https://www.geeksforgeeks.org/php-explode-function/
+            $splittedString = explode(",", $_POST['selectedPlatform']);
+            $platform_url = $splittedString[0];
+            $entertainment_eid = $splittedString[2];
+		
+			//add this information into available_on table in the database
+			//check if this data is already in the table
+			//if no then add, otherwise display message about data already in table
+			$check = "SELECT * FROM available_on WHERE eid = '$entertainment_eid' AND url = '$platform_url'";
+			$query = mysqli_query($connection, $check);
+			//https://stackoverflow.com/questions/22677992/count-length-of-array-php
+			$row_num = mysqli_num_rows($query);
+			//echo "row num -->".$row_num . "<---";
+			//if $row = 0 --> add data else show "data exists'
+			if($row_num < 1)
+			{
+				$insert_available_on = "INSERT INTO available_on (eid, url) VALUES ('$entertainment_eid' , '$platform_url')";
+				try
+				{
+					mysqli_query($connection, $insert_available_on);
+					echo "<p class = \"goodData\">";
+					echo "Data successfully in the database";
+					echo "</p>";
+					//header("Location: admin_editUserInfo.php");
+					echo "<br>";
+				}
+				catch (Exception $e)
+				{
+					echo "<p class = \"error\">";
+					echo "Error, Unable to update the information</p>";
+					//header("Location: admin_editUserInfo.php");
+					echo $e;
+				}
+			}	
+			else
+			{
+				//$row > 0, no need to add again
+				echo "<p class = \"goodData\">";
+				echo "Data already in table</p>";
+			}
+			echo "</form>";
+			echo "<br><br>";
+		}
+
+		//adding the information about theatre into the database
+		if(isset($_POST['selectedTheatre'])) 
+		{
+			//echo $_POST['selectedTheatre'];
+			//The value of the option in html is "URL,Name_of_platform,EID"
+			//so we can split and add that into the table
+
+			echo "<form style = \"width:600px\">";
+            //https://www.geeksforgeeks.org/php-explode-function/
+            $splittedString = explode(",", $_POST['selectedTheatre']);
+            $theatre_name = $splittedString[0];
+			$theatre_city = $splittedString[1];
+            $entertainment_eid = $splittedString[2];
+		
+			//add this information into available_IN table in the database
+			//check if this data is already in the table
+			//if no then add, otherwise display message about data already in table
+			$check = "SELECT * FROM available_in WHERE eid = '$entertainment_eid' AND city_name = '$theatre_city' AND theatre_name = '$theatre_name'";
+			$query = mysqli_query($connection, $check);
+			//https://stackoverflow.com/questions/22677992/count-length-of-array-php
+			$row_num = mysqli_num_rows($query);
+			//echo "row num -->".$row_num . "<---";
+			//if $row = 0 --> add data else show "data exists'
+			if($row_num < 1)
+			{
+				$insert_available_in = "INSERT INTO available_in (eid, city_name, theatre_name) VALUES ('$entertainment_eid' , '$theatre_city' , '$theatre_name')";
+				try
+				{
+					mysqli_query($connection, $insert_available_in);
+					echo "<p class = \"goodData\">";
+					echo "Data successfully in the database";
+					echo "</p>";
+					//header("Location: admin_editUserInfo.php");
+					echo "<br>";
+				}
+				catch (Exception $e)
+				{
+					echo "<p class = \"error\">";
+					echo "Error, Unable to update the information</p>";
+					//header("Location: admin_editUserInfo.php");
+					echo $e;
+				}
+			}	
+			else
+			{
+				//$row > 0, no need to add again
+				echo "<p class = \"goodData\">";
+				echo "Data already in table</p>";
+			}
+			echo "</form>";
+			echo "<br><br>";
+		}
+		//echo print_r($_POST);	
+
+
+		//Editing the Rating of existing entertainment
+
+
+		//Editing the type of existing entertainment
 	?>
 	<br><br>
 
 	<a href="admin_editInfo.php">Link to Previous Page</a>	<br><br>
 	<a href="./../index.php">Link to Main Page</a>
+	<br><br>
 	<?php mysqli_close($connection); ?>		
 </body>
 </html>
