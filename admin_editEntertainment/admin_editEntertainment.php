@@ -310,8 +310,9 @@
 			echo "<br>";
 			echo "<button type = \"submit\"  name = \"selectedEntertainment_av_in\" >Show AVAILABLE_IN information</button>";
 			echo "<button type = \"submit\"  name = \"selectedEntertainment_av_on\" >Show AVAILABLE_ON information</button>";
-			echo "</form>";
-			
+			echo "<br>";echo "<br>";echo "<br>";echo "<br>";
+			echo "<button type = \"submit\"  name = \"selectedEntertainment_type_rating\" >Show \"Type\" and \"Rating\" information</button>";
+			echo "</form>";	
 			echo "<br>";
 		}
 		//getting which entertainment to edit
@@ -376,7 +377,7 @@
 			if (isset($_POST['selectedEntertainment_av_in'])) {
 				echo "<form style = \"width:600px\">";
 				echo "<p class = \"\">";
-				echo "This entertainment is AVAILABLE_IN : ";
+				echo "'" . $entertainmentName . "' is AVAILABLE_IN : ";
 				echo "</p>";
 				$allEntertainment_AI = mysqli_query($connection, "SELECT * FROM entertainment AS E, available_in AS AI WHERE E.eid = AI.eid AND E.eid = $selectedEntertainmentEID");
 				$i = 1;
@@ -420,8 +421,61 @@
 
 				echo "</form>";	
 			}
-		
+
+			//if show "Type and Rating" information buttom is pressed
+			if (isset($_POST['selectedEntertainment_type_rating'])) {
+				
+				$allEntertainment_type_rating = mysqli_query($connection, "SELECT type, rating FROM entertainment WHERE eid = $selectedEntertainmentEID");
+				
+				//this will result in only two values as EID is unique
+				while($row = mysqli_fetch_array($allEntertainment_type_rating)) {
+					$type = $row['type'];
+					$rating = $row['rating'];
+
+				}
+
+				echo "<form style = \"width:600px\">";
+				echo "<p class = \"\">";
+				echo "The \"Type\" of '".$entertainmentName . "' is : \"" . $type . "\"";
+				echo "<br>";
+				echo "The \"Rating\" of '" . $entertainmentName . "' is : \"". $rating . "\"";
+				echo "</p>";
+				echo "</form>";
+
+				echo "<form style = \"width:600px\" action = \"\" method = \"post\">";
+				$allTheatre = mysqli_query($connection, "SELECT * FROM city_theater_name ");
+				echo "<label>Select updated \"Type\" and \"Rating\" of this entertainment: </label>";
+				echo "<br><br>";
+				//https://www.w3schools.com/tags/tag_select.asp
+				echo "<label>Select Type</label>";
+				echo "<select name = \"type_edit\" id=\"type\">" ;
+				echo "<option value= \"Sci-Fi,".$selectedEntertainmentEID."\"> Sci-Fi </option>";
+				echo "<option value= \"Fiction,".$selectedEntertainmentEID."\"> Fiction </option>";
+				echo "<option value= \"Action,".$selectedEntertainmentEID."\"> Action </option>";
+				echo "<option value= \"Comedy,".$selectedEntertainmentEID."\"> Comedy </option>";
+				echo "</select>";
+				echo "<br>";echo "<br>";
+
+				echo "<label>Rating&nbsp&nbsp</label>";
+				echo "<select name = \"entertainment_rating_edit\" id=\"entertainment_rating\">" ;
+				echo "<option value= \"0,".$selectedEntertainmentEID."\"> 0 (Default)</option>";
+				echo "<option value= \"1,".$selectedEntertainmentEID."\"> 1 </option>";
+				echo "<option value= \"2,".$selectedEntertainmentEID."\"> 2 </option>";
+				echo "<option value= \"3,".$selectedEntertainmentEID."\"> 3 </option>";
+				echo "<option value= \"4,".$selectedEntertainmentEID."\"> 4 </option>";
+				echo "<option value= \"5,".$selectedEntertainmentEID."\"> 5 </option>";
+				echo "</select>";
+				echo "<br>";
+				echo "<label>(Please note that both of these values will be updated)</label>";
+
+				echo "<br><br>";
+
+				echo "<button type = \"submit\"  name = \"selectedEntertainment_type_rating_edit\" >Add into database</button>";
+				echo "</form>";
+				echo "</form>";	
+			}
 		}
+
 		//adding information about the new platform
 		if(isset($_POST['selectedPlatform'])) 
 		{
@@ -526,15 +580,57 @@
 			echo "</form>";
 			echo "<br><br>";
 		}
+		
+
+		//adding "type" and "rating" information into database
+		if(isset($_POST['entertainment_rating_edit']) && isset($_POST['type_edit']) )
+		{
+			//echo "rating new".$_POST['entertainment_rating_edit'];
+			//echo "<br>";
+
+			//echo $_POST['entertainment_rating_edit'];
+			//The value of the option in html is "number,EID"
+			//so we can split and add that into the table
+			echo "<form style = \"width:600px\">";
+			//https://www.geeksforgeeks.org/php-explode-function/
+			$splittedString = explode(",", $_POST['entertainment_rating_edit']);
+			$new_rating = $splittedString[0];
+			$entertainment_eid = $splittedString[1];
+
+			$splittedString = explode(",", $_POST['type_edit']);
+			$new_type = $splittedString[0];
+			//$entertainment_eid = $splittedString[1];
+	
+			//add this information into entertainment table in the database
+			$update_rating = "UPDATE entertainment SET rating = '$new_rating' , type = '$new_type' WHERE eid = '$entertainment_eid'";
+			try
+			{
+				mysqli_query($connection, $update_rating);
+				echo "<p class = \"goodData\">";
+				echo "Data successfully in the database";
+				echo "</p>";
+				//header("Location: admin_editUserInfo.php");
+				echo "<br>";
+			}
+			catch (Exception $e)
+			{
+				echo "<p class = \"error\">";
+				echo "Error, Unable to update the information</p>";
+				//header("Location: admin_editUserInfo.php");
+				echo $e;
+			}	
+			echo "</form>";
+			echo "<br><br>";
+		}
 		//echo print_r($_POST);	
-
-
-		//Editing the Rating of existing entertainment
-
-
-		//Editing the type of existing entertainment
 	?>
 	<br><br>
+	
+	
+	<form style = "width: 200px" action=""  method="post">
+	<button name = "" style = "float:middle"  type="submit">Refresh Page
+	</button>
+	</form>
 
 	<a href="admin_editInfo.php">Link to Previous Page</a>	<br><br>
 	<a href="./../index.php">Link to Main Page</a>
