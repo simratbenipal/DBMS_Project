@@ -24,7 +24,7 @@
 	<h2>Current HIRES Table</h2>
 
 	<?php 
-    echo "add join conditions between prod and director to show who is hired by whom and then give options to change it<br><br>";
+   // echo "add join conditions between prod and director to show who is hired by whom and then give options to change it<br><br>";
     $connection = mysqli_connect("localhost", "root", "","entertainment_db");
 		//check if connection was made properly or no
 		if(mysqli_connect_errno())
@@ -63,7 +63,7 @@
 	</form>	
     
 	<form style = "width: 200px" action=""  method="post">
-	<button name = "removeHires" type="submit">Delete Data into HIRES Table </button>
+	<button name = "removeHires" type="submit">Delete Data from HIRES Table </button>
 	</form>	
    
 	<?php
@@ -137,7 +137,7 @@
 			//if $row = 0 --> add data else show "data exists'
 			if($row_num < 1)
 			{
-				$insert_HIRES = "INSERT INTO HIRES (prod_pid, director_ssn) VALUES ('$prodPID',$directorSSN)";
+				$insert_HIRES = "INSERT INTO HIRES (prod_pid, director_ssn) VALUES ('$prodPID','$directorSSN')";
 				try
 				{
 					mysqli_query($connection, $insert_HIRES);

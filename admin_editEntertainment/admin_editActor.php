@@ -63,7 +63,7 @@
 	</form>	
 	
 	<form style = "width: 200px" action=""  method="post">
-	<button name = "updateExistingActor" type="submit">Add Data into ACTS_IN (under const)</button>
+	<button name = "updateExistingActor" type="submit">Add Data into ACTS_IN</button>
 	</form>	
 
 	<?php
@@ -150,7 +150,7 @@
 					echo "<p class = \"error\">";
 					echo "Error, please check the data and enter again</p>";
 					//header("Location: admin_editUserInfo.php");
-                    echo $e;
+                    //echo $e;
 				}	
 			}
 			}
@@ -294,11 +294,14 @@
 			echo "Actor = '" . $actorName . "' ACTS_IN '" . "Movie Name = ". $entertainmentName . "'<br>";
 
 			//check if this data already exists in the ACTS_IN table
-			$check = "SELECT * FROM ACTS_IN WHERE actor_ssn = $actorSSN AND $entertainmentEID";
+			$check = "SELECT * FROM ACTS_IN WHERE actor_ssn = '$actorSSN' AND '$entertainmentEID'";
 			$query = mysqli_query($connection, $check);
 			//https://stackoverflow.com/questions/22677992/count-length-of-array-php
 			$row_num = mysqli_num_rows($query);
 			//echo $row_num;
+			//echo $actorSSN;
+			//echo "<br>";
+			//echo $entertainmentEID;
 			//if $row = 0 --> add data else show "data exists'
 			if($row_num <= 1)
 			{

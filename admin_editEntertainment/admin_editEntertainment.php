@@ -139,7 +139,7 @@
 			echo  "<br>";
 			while($row = mysqli_fetch_array($result))
 			{
-				echo "<option value= \"" . $row['pid'] . "," . $row['ssn'] . "\">". $row['name'] . " , " . $row['fname'] . " " . $row['fname'] . " </option>";
+				echo "<option value= \"" . $row['pid'] . "," . $row['ssn'] . "\">". $row['name'] . " , " . $row['fname'] . " " . $row['lname'] . " </option>";
 			}
 
 			echo "</select>";
@@ -179,7 +179,7 @@
 				echo "<p class = \"error\">";
 				echo "Cannot have empty Name or EID<br> Enter Data Again</p>";
 			}
-			else if (strlen($newEID) < 5)
+			else if (strlen($newEID) < 3)
 			{
 				echo "<p class = \"error\">";
 				echo "EID should have at least 4 numbers <br> Enter Data Again</p>";

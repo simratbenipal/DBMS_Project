@@ -62,7 +62,7 @@
 	</form>	
 	
 	<form style = "width: 200px" action=""  method="post">
-	<button name = "updateHires" type="submit">Add Data into HIRES Table (under const)</button>
+	<button name = "updateHires" type="submit">Add Data into HIRES Table</button>
 	</form>	
    
 	<?php
@@ -293,7 +293,7 @@
 			echo "Production Company Name = '". $productionName . "' HIRES " . "Director = '" . $directorName . "'<br>";
 
 			//check if this data already exists in the ACTS_IN table
-			$check = "SELECT * FROM HIRES WHERE director_ssn = $directorSSN AND prod_pid = $prodPID";
+			$check = "SELECT * FROM HIRES WHERE director_ssn = '$directorSSN' AND prod_pid = '$prodPID'";
 			$query = mysqli_query($connection, $check);
 			//https://stackoverflow.com/questions/22677992/count-length-of-array-php
 			$row_num = mysqli_num_rows($query);
@@ -301,7 +301,7 @@
 			//if $row = 0 --> add data else show "data exists'
 			if($row_num <= 1)
 			{
-				$insert_HIRES = "INSERT INTO HIRES (prod_pid, director_ssn) VALUES ('$prodPID',$directorSSN)";
+				$insert_HIRES = "INSERT INTO HIRES (prod_pid, director_ssn) VALUES ('$prodPID','$directorSSN')";
 				try
 				{
 					mysqli_query($connection, $insert_HIRES);
@@ -316,7 +316,7 @@
 					echo "<p class = \"error\">";
 					echo "Error, Unable to update the user</p>";
 					//header("Location: admin_editUserInfo.php");
-					//echo $e;
+					echo $e;
 				}
 			}	
 			else
